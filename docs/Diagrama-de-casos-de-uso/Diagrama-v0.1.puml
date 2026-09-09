@@ -17,7 +17,7 @@ rectangle "ContentFlow Mobile" {
         usecase "UC02 - Fazer login" as UC02
     }
 
-    package "Minhas Ideias" {
+    package "Banco de Ideias" {
         usecase "UC03 - Criar ideia" as UC03
         usecase "UC04 - Visualizar ideias" as UC04
     }
@@ -25,6 +25,8 @@ rectangle "ContentFlow Mobile" {
     package "Posts" {
         usecase "UC05 - Criar post" as UC05
         usecase "UC06 - Editar post" as UC06
+        usecase "UC07 - Editar post" as UC07
+        usecase "UC08 - Excluir post" as UC08
     }
 }
 
@@ -38,7 +40,10 @@ usuario --> UC04
 usuario --> UC05
 usuario --> UC06
 
+usuario --> UC07
+usuario --> UC08
+
 ' Relação entre funcionalidades
-UC03 ..> UC05 : <<extend>>\n(a partir de uma ideia)
+UC03 ..> UC05 : <<include>>\n(a partir de uma ideia)
 
 @enduml
