@@ -1,0 +1,44 @@
+@startuml
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam usecase {
+    BackgroundColor #E8E5FF
+    BorderColor #5B50D6
+    ArrowColor #333333
+}
+
+actor "Usuário" as usuario
+
+rectangle "ContentFlow Mobile" {
+
+    package "Conta" {
+        usecase "UC01 - Criar conta" as UC01
+        usecase "UC02 - Fazer login" as UC02
+    }
+
+    package "Minhas Ideias" {
+        usecase "UC03 - Criar ideia" as UC03
+        usecase "UC04 - Visualizar ideias" as UC04
+    }
+
+    package "Posts" {
+        usecase "UC05 - Criar post" as UC05
+        usecase "UC06 - Editar post" as UC06
+    }
+}
+
+' Interações do usuário
+usuario --> UC01
+usuario --> UC02
+
+usuario --> UC03
+usuario --> UC04
+
+usuario --> UC05
+usuario --> UC06
+
+' Relação entre funcionalidades
+UC03 ..> UC05 : <<extend>>\n(a partir de uma ideia)
+
+@enduml
