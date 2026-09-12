@@ -1,6 +1,6 @@
 import '../global.css';
 
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { useFonts } from '@expo-google-fonts/poppins';
 import {
   Poppins_400Regular,
@@ -55,8 +55,14 @@ export default function RootLayout() {
 function RootLayoutNav() {
 
   return (
-    <ThemeProvider value={DarkTheme}>
-      <Stack>
+    <ThemeProvider value={DefaultTheme}>
+      <Stack
+        screenOptions={{
+            contentStyle: {
+              backgroundColor: '#FFFFFF',
+            },
+          }}
+      >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
