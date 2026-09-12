@@ -118,6 +118,26 @@ module.exports = {
           900: "#6B1C1C",
         },
       },
+
+      fontFamily: {
+        "poppins-regular": ["Poppins_400Regular"],
+        "poppins-medium": ["Poppins_500Medium"],
+        "poppins-semibold": ["Poppins_600SemiBold"],
+        "poppins-bold": ["Poppins_700Bold"],
+      },
+
+      fontSize: {
+        //heading
+        "heading-1": ["32px", { lineHeight: "38px" }],
+        "heading-2": ["28px", { lineHeight: "34px" }],
+        "heading-3": ["24px", { lineHeight: "29px" }],
+        
+        //text
+        "large-text": ["18px", { lineHeight: "22px" }],
+        "body-text": ["16px", { lineHeight: "19px" }],
+        "small-text": ["14px", { lineHeight: "17px" }],
+        "legal-text": ["12px", { lineHeight: "14px" }],
+      },
     },
   },
 
