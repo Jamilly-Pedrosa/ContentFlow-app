@@ -11,6 +11,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Base Colors
+        black: "#1A1A1A",
+        white: "#FFFFFF",
+        background: "#F8F9FA",
+        
         // Brand Colors
         primary: {
           50: "#F0EEFD",
