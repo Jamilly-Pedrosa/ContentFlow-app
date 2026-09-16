@@ -19,6 +19,10 @@ export default function TabLayout() {
         tabBarShowLabel: true,
         headerShown: true,
 
+        tabBarStyle: {
+          height: 80,
+        },
+
         sceneStyle: {
           backgroundColor: '#F8F9FA',
         },
@@ -31,7 +35,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
+          title: 'Home',
           tabBarIcon: ({ size, color }) => (
             <HouseIcon size={size} color={String(color)} />
           ),
@@ -48,7 +52,6 @@ export default function TabLayout() {
         }}
       />
 
-      {/* BOTÃO + */}
       <Tabs.Screen
         name="adicionar"
         options={{
