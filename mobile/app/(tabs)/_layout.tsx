@@ -1,4 +1,5 @@
 import {HouseIcon, AddressBookIcon} from 'phosphor-react-native';
+import {colors} from '../../theme/Colors';
 import {Tabs } from 'expo-router';
 
 
@@ -8,7 +9,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerTintColor: '#1A1A1A',
-        tabBarActiveTintColor: '',
+        tabBarActiveTintColor: colors.primary[500],
         headerShown: true,
         sceneStyle: {
           backgroundColor: '#F8F9FA',
