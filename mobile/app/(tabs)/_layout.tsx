@@ -3,20 +3,24 @@ import {
   CalendarBlankIcon,
   PlusIcon,
   NoteBlankIcon,
-  ChartBarIcon
+  ChartBarIcon,
 } from 'phosphor-react-native';
 
 import { View, Pressable } from 'react-native';
 import { Tabs } from 'expo-router';
+
+import { colors } from '../../theme/Colors';
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerTintColor: '#1A1A1A',
-        tabBarActiveTintColor: '#7C3AED',
+
+        tabBarActiveTintColor: colors.secondary[500],
         tabBarInactiveTintColor: '#999999',
         tabBarShowLabel: true,
+
         headerShown: true,
 
         tabBarStyle: {
@@ -74,7 +78,7 @@ export default function TabLayout() {
                   width: 46,
                   height: 46,
                   borderRadius: 28,
-                  backgroundColor: '#7C3AED',
+                  backgroundColor: colors.secondary[500],
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
