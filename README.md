@@ -1,10 +1,10 @@
+<p align="center">
+  <img src="./docs/imagens/Cover.jpg" alt="Capa do projeto ContentFlow-app">
+</p>
+
 > Planeje posts, organize ideias e acompanhe seus resultados.
 
 ---
-
-<p align="center">
-  <img src="./docs/imagem/Cover.jpg" alt="Capa do projeto ContentFlow-app">
-</p>
 
 # ✦ Sobre
 
