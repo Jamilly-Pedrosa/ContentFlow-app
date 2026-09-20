@@ -100,9 +100,9 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="post"
+        name="posts"
         options={{
-          title: 'Post',
+          title: 'Posts',
           tabBarIcon: ({ size, color }) => (
             <NoteBlankIcon size={size} color={String(color)} />
           ),
