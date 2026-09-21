@@ -1,6 +1,8 @@
 import { Pressable, Text, View } from 'react-native';
 import { Slot, router, usePathname } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { Container } from '../../../components/layout/Container';
+import { ArrowLeftIcon, MagnifyingGlassIcon } from "phosphor-react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Tabs } from '../../../components/ui/Tabs';
 
 export default function PostLayout() {
@@ -23,57 +25,53 @@ export default function PostLayout() {
   }
 
   return (
-    <View className="flex-1 bg-white px-4">
+    <SafeAreaView className="flex-1">
+      <Container className='flex-1'>
 
-      {/* Header */}
-      <View className="flex-row items-center justify-between mt-4">
+        {/* Header */}
+        <View className="flex-row items-center justify-between mt-4">
 
-        <Pressable
-          onPress={() => router.back()}
-          className="w-8 h-8 items-center justify-center"
-        >
-          <Ionicons
-            name="arrow-back"
-            size={20}
-            color="#999999"
+          <Pressable
+            onPress={() => router.back()}
+            className="w-8 h-8 items-center justify-center"
+          >
+            <View>
+                <ArrowLeftIcon color="#727272"/>
+            </View>
+          </Pressable>
+
+          <Text className="font-poppins-medium text-heading-2 text-text">
+            Meus posts
+          </Text>
+
+          <Pressable
+            onPress={() => {}}
+            className="w-8 h-8 items-center justify-center"
+          >
+            <View>
+                <MagnifyingGlassIcon color="#727272"/>
+            </View>
+
+
+          </Pressable>
+
+        </View>
+
+        {/* Tabs */}
+        <View className="mt-8">
+          <Tabs
+            tabs={['Planejamento', 'Ideias']}
+            activeTab={activeTab}
+            onChange={handleTabChange}    
           />
-        </Pressable>
+        </View>
 
-        <Text className="text-xl font-semibold text-gray-900">
-          Meus posts
-        </Text>
+        {/* Conteúdo */}
+        <View className="flex-1 mt-4">
+          <Slot />
+        </View>
 
-        <Pressable
-          onPress={() => {}}
-          className="w-8 h-8 items-center justify-center"
-        >
-          <Ionicons
-            name="search-outline"
-            size={20}
-            color="#999999"
-          />
-        </Pressable>
-
-      </View>
-
-      {/* Tabs */}
-      <View className="mt-5">
-        <Tabs
-          tabs={['Planejamento', 'Ideias']}
-          activeTab={activeTab}
-          onChange={handleTabChange}
-          backgroundClassName="bg-gray-50"
-          activeClassName="text-primary-300"
-          inactiveClassName="text-black"
-          indicatorClassName="bg-primary-300"
-        />
-      </View>
-
-      {/* Conteúdo */}
-      <View className="flex-1 mt-4">
-        <Slot />
-      </View>
-
-    </View>
+      </Container>
+    </SafeAreaView>
   );
 }

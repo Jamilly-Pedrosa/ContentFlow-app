@@ -65,13 +65,12 @@ export default function Post() {
   ).length;
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1">
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerClassName="px-4 pb-6"
       >
-        <View className="flex-row gap-2 mt-4">
+        <View className="flex-row gap-2 mt-2">
 
           <Pressable
             onPress={() => setActiveFilter('Todos')}
@@ -120,7 +119,7 @@ export default function Post() {
 
 
         {/* POSTS */}
-        <View className="mt-4 gap-2">
+        <View className="mt-4 gap-2 bg-white">
 
           {filteredPosts.map((post, index) => (
 
