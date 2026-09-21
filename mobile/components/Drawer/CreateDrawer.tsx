@@ -1,78 +1,125 @@
-import {View, Text, Pressable} from "react-native";
-import { NotePencilIcon,LightbulbIcon, X, XIcon } from "phosphor-react-native";
-import {colors} from "../../theme/Colors";
-import {StyleSheet} from "react-native";
-import {useState} from "react";
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { NotePencilIcon, LightbulbIcon, XIcon } from 'phosphor-react-native';
+import { colors } from '../../theme/Colors';
 
 type CreateDrawerProps = {
-    visible: boolean;
-    close: () => void;
-}
+  visible: boolean;
+  close: () => void;
+};
 
-export default function CreateDrawer({ visible,close }: CreateDrawerProps) {
+export default function CreateDrawer({
+  visible,
+  close,
+}: CreateDrawerProps) {
+  if (!visible) return null;
 
-  
-    return (
-        <View className={visible ? 'flex bg-white w-full rounded-t-3xl p-4 h-35 border-24' : 'hidden'}>
-            <View className="flex-row gap-6 items-center mb-4">
-                <Pressable onPress={close}>
-                    <View style={styles.containerX}>
-                        <XIcon/>
-                    </View>
-                </Pressable>
-                <View>
-                    <Text className="text-large-text color-text-gray-800">
-                        O que você deseja criar?
-                    </Text>
-                </View>
-            </View>
-        
-            <View style={styles.conteinerButtons}>
-                
-                <View className="items-center">
-                    <Pressable className="items-center">
-                        <View style={styles.containerIcon}>
-                            <NotePencilIcon/>
-                        </View>
-                        <Text className="text-body-text color-text-gray-800">
-                            Post
-                        </Text>
-                    </Pressable>
-                </View>
+  return (
+    <View style={styles.overlay}>
+      <Pressable style={styles.backdrop} onPress={close} />
 
-                <Pressable className="items-center">
-                    <View style={styles.containerIcon}>
-                        <LightbulbIcon/>
-                    </View>
-                    <Text className="text-body-text color-text-gray-800">
-                        Idea
-                    </Text>
-                </Pressable>
-            
-            </View>
+      <View style={styles.drawer}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Pressable
+            onPress={close}
+            style={styles.closeButton}
+            accessibilityRole="button"
+            accessibilityLabel="Fechar"
+          >
+            <XIcon size={24} color={colors.gray[900]} />
+          </Pressable>
+
+          <Text className="font-poppins-medium text-large-text color-text-gray-800">
+            O que você deseja criar?
+          </Text>
         </View>
-    )
+
+        {/* Ações */}
+        <View style={styles.actions}>
+          <Pressable style={styles.action}>
+            <View style={styles.containerIcon}>
+              <NotePencilIcon size={24} color={colors.gray[900]} />
+            </View>
+
+            <Text className="font-poppins-medium text-body-text color-text-gray-800">
+              Post
+            </Text>
+          </Pressable>
+
+          <Pressable style={styles.action}>
+            <View style={styles.containerIcon}>
+              <LightbulbIcon size={24} color={colors.gray[900]} />
+            </View>
+
+            <Text className="font-poppins-medium text-body-text color-text-gray-800">
+              Ideia
+            </Text>
+          </Pressable>
+        </View>
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    containerIcon: {
-        backgroundColor: colors.primary[50],
-        width: 70,
-        height: 70,
-        borderRadius: 24,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    containerX: {
-        width: 30,
-        height: 30,
-        //borderRadius: 24,
-        //justifyContent: 'center',
-        //alignItems: 'center',
-    },
-    conteinerButtons: {
-        flexDirection: 'row',
-        gap: 20,
-        justifyContent: "center",
-    }
-}); 
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'flex-end',
+  },
+
+  backdrop: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: 'rgba(0, 0, 0, 0.30)',
+  },
+
+  drawer: {
+    width: '100%',
+    height: 215,
+    backgroundColor: colors.white,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+  },
+
+  header: {
+    position: 'relative',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 14,
+  },
+
+  closeButton: {
+    position: 'absolute',
+    left: 16,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  actions: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    gap: 16,
+  },
+
+  action: {
+    alignItems: 'center',
+  },
+
+  containerIcon: {
+    width: 70,
+    height: 70,
+    borderRadius: 24,
+    backgroundColor: colors.primary[50],
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+});

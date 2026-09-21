@@ -6,7 +6,7 @@ import {
   ChartBarIcon,
 } from 'phosphor-react-native';
 
-import { View, Pressable } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import {useState} from "react";
 import { Tabs } from 'expo-router';
 
@@ -119,7 +119,10 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
-      <View className="absolute bottom-0 left-0 right-0 z-50">
+      <View
+        pointerEvents="box-none"
+        style={[StyleSheet.absoluteFill, { zIndex: 50 }]}
+      >
         <CreateDrawer visible={isDrawerOpen} close={() => setIsDrawerOpen(false)} />
       </View>
     </>
