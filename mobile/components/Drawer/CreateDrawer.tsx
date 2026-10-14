@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { NotePencilIcon, LightbulbIcon, XIcon } from 'phosphor-react-native';
+import { router } from 'expo-router';
 import { colors } from '../../theme/Colors';
 
 type CreateDrawerProps = {
@@ -36,7 +37,14 @@ export default function CreateDrawer({
 
         {/* Ações */}
         <View style={styles.actions}>
-          <Pressable style={styles.action}>
+          <Pressable
+            style={styles.action}
+            onPress={() => {
+              close();
+              router.push('/(creation)/criar-post');
+            }}
+            accessibilityRole="button"
+          >
             <View style={styles.containerIcon}>
               <NotePencilIcon size={24} color={colors.gray[900]} />
             </View>
@@ -46,7 +54,14 @@ export default function CreateDrawer({
             </Text>
           </Pressable>
 
-          <Pressable style={styles.action}>
+          <Pressable
+            style={styles.action}
+            onPress={() => {
+              close();
+              router.push('/(creation)/criar-ideia');
+            }}
+            accessibilityRole="button"
+          >
             <View style={styles.containerIcon}>
               <LightbulbIcon size={24} color={colors.gray[900]} />
             </View>
