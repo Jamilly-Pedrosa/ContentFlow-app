@@ -3,7 +3,7 @@ import { Text, View, Image } from 'react-native';
 export default function EmptyAnalysis() {
   return (
   
-    <View className="flex-1 w-full pt-10">
+    <View className="w-full">
         
       {/* IMAGEM */}
       <View className="w-full h-[200px] mt-4 items-center justify-center">
