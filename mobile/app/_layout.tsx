@@ -68,6 +68,11 @@ function RootLayoutNav() {
             options={{ headerShown: false }}
         />
 
+        <Stack.Screen
+          name="(creation)"
+          options={{ headerShown: false }}
+        />
+
         <Stack.Screen 
           name="(tabs)" 
           options={{ headerShown: false }} />
