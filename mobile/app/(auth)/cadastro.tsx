@@ -8,7 +8,16 @@ import { Input } from '../../components/ui/Input';
 import { Container } from '../../components/layout/Container';
 import { PasswordInput } from '../../components/ui/PasswordInput';
 
+import {useState} from 'react';
+import { emailValidation, passwordValidation } from '../utils/authValidation';
+
+
 export default function Cadastro() {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
   return (
     <SafeAreaView className="flex-1">
       <Container className="flex-1">
@@ -46,7 +55,9 @@ export default function Cadastro() {
               <View>
                 <Input 
                   label="Primeiro nome"
-                  placeholder="Digite seu nome"  
+                  placeholder="Digite seu nome"
+                  value={firstName}
+                  onChangeText={(text) => setFirstName(text)}
                 />
               </View>
 
@@ -54,6 +65,8 @@ export default function Cadastro() {
                 <Input 
                   label="Sobrenome"
                   placeholder="Digite seu sobrenome" 
+                  value={lastName}
+                  onChangeText={(text) => setLastName(text)}
                 />
               </View>
 
@@ -63,6 +76,10 @@ export default function Cadastro() {
                   placeholder="Digite seu email" 
                   keyboardType="email-address"
                   autoCapitalize='none'
+                  value={email}
+                  onChangeText={(text) => setEmail(text)}
+                  error={emailValidation(email).error}
+                  errorMessage={emailValidation(email).errorMessage}
                 />
               </View>
 
@@ -71,6 +88,10 @@ export default function Cadastro() {
                   label="Senha"
                   placeholder="Digite sua senha" 
                   helperText='A senha deve ter no mínimo 8 caracteres.'
+                  value={password}
+                  onChangeText={(text) => setPassword(text)}
+                  error={passwordValidation(password).error}
+                  errorMessage={passwordValidation(password).errorMessage}
                 />
               </View>
 
@@ -83,7 +104,8 @@ export default function Cadastro() {
           <Button
             type="primary"
             size="L"
-            onPress={() => router.replace('/(tabs)')}
+            onPress={() => console.log(`Primeiro nome: ${firstName}, Sobrenome: ${lastName}, E-mail: ${email}, Senha: ${password}`)}
+            //onPress={() => router.replace('/(tabs)')}
           >
             Cadastrar-se
           </Button>

@@ -8,7 +8,14 @@ import { Input } from '../../components/ui/Input';
 import { Container } from '../../components/layout/Container';
 import { PasswordInput } from '../../components/ui/PasswordInput';
 
+import {useState} from 'react';
+import { emailValidation, passwordValidation } from '../utils/authValidation';
+
 export default function Cadastro() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
   return (
     <SafeAreaView className="flex-1">
       <Container className="flex-1">
@@ -49,6 +56,10 @@ export default function Cadastro() {
                   placeholder="Digite seu email" 
                   keyboardType="email-address"
                   autoCapitalize='none'
+                  value={email}
+                  onChangeText={(text) => setEmail(text)}
+                  error={emailValidation(email).error}
+                  errorMessage={emailValidation(email).errorMessage}
                 />
               </View>
 
@@ -57,6 +68,10 @@ export default function Cadastro() {
                   label="Senha"
                   placeholder="Digite sua senha" 
                   helperText='A senha deve ter no mínimo 8 caracteres.'
+                  value={password}
+                  onChangeText={(text) => setPassword(text)}
+                  error={passwordValidation(password).error}
+                  errorMessage={passwordValidation(password).errorMessage}
                 />
               </View>
 
@@ -64,6 +79,10 @@ export default function Cadastro() {
                 <PasswordInput 
                   label="Confirmar senha"
                   placeholder="Confirmar senha" 
+                  value={confirmPassword}
+                  onChangeText={(text) => setConfirmPassword(text)}
+                  error={passwordValidation(confirmPassword).error}
+                  errorMessage={passwordValidation(confirmPassword).errorMessage}
                 />
               </View>
 
