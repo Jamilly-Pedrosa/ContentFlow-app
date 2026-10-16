@@ -100,3 +100,75 @@ export function confirmPasswordValidation(password: string, confirmPassword: str
 
     return confirmPasswordTemp;
 }
+
+
+export function nameValidation(name: string): validation {
+    let nameTemp: validation = {
+        error: false,
+        errorMessage: ''
+    }
+
+    if(name.length === 0) {
+        nameTemp.error = true;
+        nameTemp.errorMessage = 'O campo de nome está vazio.';
+        return nameTemp;
+    }
+
+    if(name.trim() === '') {
+        nameTemp.error = true;
+        nameTemp.errorMessage = 'O campo de nome não pode conter apenas espaços em branco.';
+        return nameTemp;
+    }
+
+    if(name.length <= 2) {
+        nameTemp.error = true;
+        nameTemp.errorMessage = 'O nome deve ter mais de 2 caracteres.';
+        return nameTemp;
+    }
+
+    return nameTemp;
+}
+
+
+export function lastNameValidation(lastName: string): validation {
+    let lastNameTemp: validation = {
+        error: false,
+        errorMessage: ''
+    }
+
+    if(lastName.length === 0) {
+        lastNameTemp.error = true;
+        lastNameTemp.errorMessage = 'O campo de sobrenome está vazio.';
+        return lastNameTemp;
+    }
+
+    if(lastName.trim() === '') {
+        lastNameTemp.error = true;
+        lastNameTemp.errorMessage = 'O campo de sobrenome não pode conter apenas espaços em branco.';
+        return lastNameTemp;
+    }
+
+    if(lastName.length <= 2) {
+        lastNameTemp.error = true;
+        lastNameTemp.errorMessage = 'O sobrenome deve mais de 2 caracteres.';
+        return lastNameTemp;
+    }
+
+    return lastNameTemp;
+}
+
+
+//Feito para validar todos os campos antes de enviar para a rota desejada
+export function validateUser(name: string, lastName: string, email: string, password: string, confirmPassword: string,  typeFunction: string): boolean {
+    if(typeFunction === 'create') {
+        if(emailValidation(email).error || passwordValidation(password).error || nameValidation(name).error || lastNameValidation(lastName).error) {
+            return false;
+        }
+    } else if(typeFunction === 'login') {
+        if(emailValidation(email).error || passwordValidation(password).error || confirmPasswordValidation(password, password).error) {
+            return false;
+        }
+    }
+
+    return true;
+}

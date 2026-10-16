@@ -9,12 +9,13 @@ import { Container } from '../../components/layout/Container';
 import { PasswordInput } from '../../components/ui/PasswordInput';
 
 import {useState} from 'react';
-import { emailValidation, passwordValidation } from '../utils/authValidation';
+import { emailValidation, passwordValidation, confirmPasswordValidation, validateUser } from '../../utils/authValidation';
 
 export default function Cadastro() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [validated, setValidated] = useState(false);
 
   return (
     <SafeAreaView className="flex-1">
@@ -58,8 +59,8 @@ export default function Cadastro() {
                   autoCapitalize='none'
                   value={email}
                   onChangeText={(text) => setEmail(text)}
-                  error={emailValidation(email).error}
-                  errorMessage={emailValidation(email).errorMessage}
+                  error={validated? emailValidation(email).error: false}
+                  errorMessage={validated? emailValidation(email).errorMessage: ''}
                 />
               </View>
 
@@ -70,8 +71,8 @@ export default function Cadastro() {
                   helperText='A senha deve ter no mínimo 8 caracteres.'
                   value={password}
                   onChangeText={(text) => setPassword(text)}
-                  error={passwordValidation(password).error}
-                  errorMessage={passwordValidation(password).errorMessage}
+                  error={validated? passwordValidation(password).error: false}
+                  errorMessage={validated? passwordValidation(password).errorMessage: ''}
                 />
               </View>
 
@@ -81,8 +82,8 @@ export default function Cadastro() {
                   placeholder="Confirmar senha" 
                   value={confirmPassword}
                   onChangeText={(text) => setConfirmPassword(text)}
-                  error={passwordValidation(confirmPassword).error}
-                  errorMessage={passwordValidation(confirmPassword).errorMessage}
+                  error={validated? confirmPasswordValidation(password, confirmPassword).error: false}
+                  errorMessage={validated? confirmPasswordValidation(password, confirmPassword).errorMessage: ''}
                 />
               </View>
 
@@ -95,7 +96,7 @@ export default function Cadastro() {
           <Button
             type="primary"
             size="L"
-            onPress={() => router.replace('/(tabs)')}
+            onPress={() => validateUser("firstName", "lastName", email, password, confirmPassword, "login") ? router.replace('/(tabs)') : setValidated(true)}
           >
             Entrar
           </Button>
