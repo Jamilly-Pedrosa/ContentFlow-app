@@ -1,9 +1,29 @@
-import {View, Text} from 'react-native'
+import { View, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Container } from '../../components/layout/Container';
+import { Header } from '../../components/layout/Header';
+import { router } from 'expo-router';
 
-export default function calendario() {
-    return (
-        <View>
-            <Text>Calendario</Text>
-        </View>
-    )
+
+export default function Analise() {
+  return (
+    <SafeAreaView className="flex-1">
+
+        <Container className="flex-1">
+
+            <Header
+                title="Calendário"
+                onBackPress={() => router.back()}
+            />
+
+            <View className="flex-1 pb-14 items-center justify-center">
+                <Text className="text-lg text-center">
+                    Em breve, você poderá visualizar seus eventos e conteúdos planejados aqui.
+                </Text>
+            </View>
+
+        </Container>
+
+    </SafeAreaView>
+  );
 }
