@@ -11,11 +11,20 @@ import { PasswordInput } from '../../components/ui/PasswordInput';
 import {useState} from 'react';
 import { emailValidation, passwordValidation, confirmPasswordValidation, validateUser } from '../../utils/authValidation';
 
+import {useUser} from '../../contexts/userContext';
+
 export default function Cadastro() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [validated, setValidated] = useState(false);
+
+  const { loginUser } = useUser();
+
+  const logar = () => {
+    loginUser(email, password);
+    router.replace('/(tabs)');
+  };
 
   return (
     <SafeAreaView className="flex-1">
@@ -96,7 +105,7 @@ export default function Cadastro() {
           <Button
             type="primary"
             size="L"
-            onPress={() => validateUser("firstName", "lastName", email, password, confirmPassword, "login") ? router.replace('/(tabs)') : setValidated(true)}
+            onPress={() => validateUser("firstName", "lastName", email, password, confirmPassword, "login") ? logar() : setValidated(true)}
           >
             Entrar
           </Button>
