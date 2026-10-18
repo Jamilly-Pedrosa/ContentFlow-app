@@ -19,15 +19,13 @@ export default function Cadastro() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [validated, setValidated] = useState(false);
+  const { createUser } = useUser();
 
-  const { sign } = useUser();
-
-  const login = () => {
-    console.log('API URL:', process.env.EXPO_PUBLIC_API_URL);
-    sign({ firstName, lastName, email });
+  const create = () => {
+    createUser({ firstName, lastName, email, password });
     router.replace('/(tabs)');
   };
-
+    
   return (
     <SafeAreaView className="flex-1">
       <Container className="flex-1">
@@ -118,7 +116,7 @@ export default function Cadastro() {
           <Button
             type="primary"
             size="L"
-            onPress={() => validateUser(firstName, lastName, email, password, "", "create") ? login() : setValidated(true)}
+            onPress={() => validateUser(firstName, lastName, email, password, "", "create") ? create() : setValidated(true)}
           >
             Cadastrar-se
           </Button>

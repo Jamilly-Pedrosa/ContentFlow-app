@@ -5,12 +5,14 @@ type User = {
   firstName: string;
   lastName: string;
   email: string;
+  password: string; 
 };
 
 type UserContextType = {
   user: User | undefined;
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
-  sign: (userData: User) => Promise<void>;
+  createUser: (userData: User) => Promise<void>;
+  loginUser: (email: string, password: string) => Promise<void>;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -18,17 +20,32 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | undefined>(undefined);
 
-  const sign = async (userData: User) => {
+  const createUser = async (userData: User) => {
     try {
-      const response = await api.post('/users', userData);
+
+      const user = {
+        name: `${userData.firstName} ${userData.lastName}`,
+        email: userData.email,
+        password: userData.password,
+      }
+      const response = await api.post('/createUser', user);
       setUser(response.data);
-    } catch (error) {
-      console.error('Erro ao cadastrar usuário:', error);
+    } catch (error: any) {
+      console.error('Erro ao cadastrar usuário:', error.response?.data);
     }
   };
 
+  const loginUser = async (email: string, password: string) => {
+    try {
+      const response = await api.post('/login', { email, password });
+      setUser(response.data);
+    } catch (error: any) {
+      console.error('Erro ao fazer login:', error.response?.data);
+    }
+  }
+
   return (
-    <UserContext.Provider value={{ user, setUser, sign }}>
+    <UserContext.Provider value={{ user, setUser, createUser, loginUser }}>
       {children}
     </UserContext.Provider>
   );
