@@ -6,22 +6,27 @@ import {
   ChartBarIcon,
 } from 'phosphor-react-native';
 
-import { View, Pressable } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
+import {useState} from "react";
 import { Tabs } from 'expo-router';
 
 import { colors } from '../../theme/Colors';
 
+import CreateDrawer from '../../components/Drawer/CreateDrawer';
+
 export default function TabLayout() {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   return (
+    <>
     <Tabs
       screenOptions={{
         headerTintColor: '#1A1A1A',
 
-        tabBarActiveTintColor: colors.secondary[500],
+        tabBarActiveTintColor: colors.primary[500],
         tabBarInactiveTintColor: '#999999',
         tabBarShowLabel: true,
 
-        headerShown: true,
+        headerShown: false,
 
         tabBarStyle: {
           height: 80,
@@ -65,7 +70,7 @@ export default function TabLayout() {
           tabBarButton: () => (
             <Pressable
               onPress={() => {
-                console.log('Adicionar');
+                setIsDrawerOpen(true);
               }}
               style={{
                 marginTop: 10,
@@ -78,7 +83,7 @@ export default function TabLayout() {
                   width: 46,
                   height: 46,
                   borderRadius: 28,
-                  backgroundColor: colors.secondary[500],
+                  backgroundColor: colors.primary[500],
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
@@ -95,9 +100,9 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="post"
+        name="posts"
         options={{
-          title: 'Post',
+          title: 'Posts',
           tabBarIcon: ({ size, color }) => (
             <NoteBlankIcon size={size} color={String(color)} />
           ),
@@ -114,5 +119,12 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+      <View
+        pointerEvents="box-none"
+        style={[StyleSheet.absoluteFill, { zIndex: 50 }]}
+      >
+        <CreateDrawer visible={isDrawerOpen} close={() => setIsDrawerOpen(false)} />
+      </View>
+    </>
   );
 }

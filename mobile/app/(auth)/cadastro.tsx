@@ -9,7 +9,8 @@ import { Container } from '../../components/layout/Container';
 import { PasswordInput } from '../../components/ui/PasswordInput';
 
 import {useState} from 'react';
-import { nameValidation, lastNameValidation, emailValidation, passwordValidation, validateUser } from '../../utils/authValidation';
+import { nameValidation, lastNameValidation, emailValidation, passwordValidation, validateUser } from '../../utils/authValidation'
+import {useUser} from '../../contexts/userContext';
 
 
 export default function Cadastro() {
@@ -18,17 +19,13 @@ export default function Cadastro() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [validated, setValidated] = useState(false);
-
-<<<<<<< Updated upstream
-=======
   const { createUser } = useUser();
 
   const create = () => {
     createUser({ firstName, lastName, email, password });
     router.replace('/(tabs)');
   };
-
->>>>>>> Stashed changes
+    
   return (
     <SafeAreaView className="flex-1">
       <Container className="flex-1">
@@ -119,11 +116,7 @@ export default function Cadastro() {
           <Button
             type="primary"
             size="L"
-<<<<<<< Updated upstream
-            onPress={() => validateUser(firstName, lastName, email, password, "", "create") ? router.replace('/(tabs)') : setValidated(true)}
-=======
             onPress={() => validateUser(firstName, lastName, email, password, "", "create") ? create() : setValidated(true)}
->>>>>>> Stashed changes
           >
             Cadastrar-se
           </Button>
