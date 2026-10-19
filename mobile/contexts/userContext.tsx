@@ -7,6 +7,7 @@ type User = {
   lastName?: string;
   email: string;
   password?: string; 
+  userId?: string;
 };
 
 type UserContextType = {

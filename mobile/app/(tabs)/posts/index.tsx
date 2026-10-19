@@ -11,10 +11,34 @@ import {
 
 import { Link } from 'expo-router';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import {useUser} from '../../../contexts/userContext';
+import api from '../../../utils/api';
 
 export default function Post() {
   const [activeFilter, setActiveFilter] = useState('Todos');
+
+  const { user } = useUser();
+
+  const [myposts, setMyposts] = useState([]);
+
+  useEffect(() => {
+  //get all posts from the user
+    const fetchPosts = async () => {
+      try {
+        const response = await api.get(`/getAllPostsById/${user?.userId}`);
+        setMyposts(response.data);
+      } catch (error) {
+        console.error('Erro ao buscar posts:', error);
+      }
+    };
+
+    if (user?.userId) {
+      fetchPosts();
+    }
+  }, [user]);
+
+  console.log('myposts', myposts);
 
   const posts = [
     {
