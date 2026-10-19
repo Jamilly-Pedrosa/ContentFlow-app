@@ -6,10 +6,11 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { TextArea } from '../../components/ui/TextArea';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { CalendarBlankIcon } from 'phosphor-react-native';
 import  CardStatusPost from '../../components/posts/CardStatusPost';
+import Upload from '@/components/uploadoImg/Upload';
 
 export default function CriarPost() {
   const [postTitulo, setPostTitulo] = useState('');
@@ -17,6 +18,9 @@ export default function CriarPost() {
   const [legenda, setLegenda] = useState('');
   const [dataPublicacao, setDataPublicacao] = useState('');
   const [status, setStatus] = useState<'Planejado' | 'Em andamento' | 'Postado'>('Planejado');
+  const [imageUri, setImageUri] = useState<string | null>(null);
+
+
 
   return (
     <SafeAreaView className="flex-1">
@@ -99,7 +103,7 @@ export default function CriarPost() {
 
                     {/* Anexo arquivo */}
                     <View>
-                    
+                        <Upload onSelectFile={setImageUri}></Upload>
                     </View>
 
                     {/* Status */}
