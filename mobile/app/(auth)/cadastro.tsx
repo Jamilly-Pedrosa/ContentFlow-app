@@ -12,6 +12,8 @@ import {useState} from 'react';
 import { nameValidation, lastNameValidation, emailValidation, passwordValidation, validateUser } from '../../utils/authValidation'
 import {useUser} from '../../contexts/userContext';
 
+import { getToken } from '../../utils/tokenServie';
+
 
 export default function Cadastro() {
   const [firstName, setFirstName] = useState('');
@@ -21,9 +23,14 @@ export default function Cadastro() {
   const [validated, setValidated] = useState(false);
   const { createUser } = useUser();
 
-  const create = () => {
-    createUser({ firstName, lastName, email, password });
-    router.replace('/(tabs)');
+  const create = async() => {
+    await createUser({ firstName, lastName, email, password });
+
+    const token = await getToken();
+    
+    if(token) {
+      router.replace('/(tabs)');  
+    }
   };
     
   return (

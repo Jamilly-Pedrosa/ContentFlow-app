@@ -18,7 +18,12 @@ import {
   CaretRightIcon,
 } from 'phosphor-react-native';
 
+import { useUser } from '../../contexts/userContext';
+
 export default function TabOneScreen() {
+
+  const { user } = useUser();
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView
@@ -30,7 +35,7 @@ export default function TabOneScreen() {
         <View className="flex-row items-center justify-between mt-2">
           <View className="flex-1">
             <Text className="text-3xl text-[#1A1A1A]">
-              Olá, <Text className="font-bold">Rony!</Text>
+              Olá, <Text className="font-bold">{user?.firstName.split(' ')[0]}!</Text>
             </Text>
 
             <Text className="text-bas mt-1">

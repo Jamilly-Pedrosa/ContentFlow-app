@@ -1,11 +1,12 @@
 import { createContext, useContext, useState } from 'react';
 import api from '../utils/api';
+import { saveToken } from '../utils/tokenServie';
 
 type User = {
   firstName: string;
-  lastName: string;
+  lastName?: string;
   email: string;
-  password: string; 
+  password?: string; 
 };
 
 type UserContextType = {
@@ -23,27 +24,47 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const createUser = async (userData: User) => {
     try {
 
-      const user = {
+      const userProp = {
         name: `${userData.firstName} ${userData.lastName}`,
         email: userData.email,
         password: userData.password,
       }
-      const response = await api.post('/createUser', user);
-      setUser(response.data);
+      const response = await api.post('/createUser', userProp);
+      const user_response: User = {
+        firstName: response.data.name,
+        email: response.data.email,
+      };
+      
+      setUser(user_response);
+      await saveToken(response.data.token);
     } catch (error: any) {
-      console.error('Erro ao cadastrar usuário:', error.response?.data);
+      console.error(
+        'Erro ao fazer login:',
+        error.response?.data ?? error.message
+      );
+      throw error;
     }
   };
 
   const loginUser = async (email: string, password: string) => {
     try {
       const response = await api.post('/login', { email, password });
-      setUser(response.data);
-    } catch (error: any) {
-      console.error('Erro ao fazer login:', error.response?.data);
-    }
-  }
+      const user_response: User = {
+        firstName: response.data.name,
+        email: response.data.email,
+      };
+      setUser(user_response);
+      await saveToken(response.data.token);
+    }catch (error: any) {
+      console.error(
+        'Erro ao fazer login:',
+        error.response?.data ?? error.message
+    );
 
+    throw error;
+  }
+  }
+  
   return (
     <UserContext.Provider value={{ user, setUser, createUser, loginUser }}>
       {children}
