@@ -24,7 +24,7 @@ rectangle "ContentFlow Mobile" {
 
     package "Posts" {
         usecase "UC05 - Criar post" as UC05
-        usecase "UC06 - Editar post" as UC06
+        usecase "UC06 - Visualizar post" as UC06
         usecase "UC07 - Editar post" as UC07
         usecase "UC08 - Excluir post" as UC08
     }

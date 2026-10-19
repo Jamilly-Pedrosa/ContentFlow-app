@@ -1,0 +1,64 @@
+@startuml
+
+left to right direction
+
+skinparam packageStyle rectangle
+
+skinparam usecase {
+    BackgroundColor #E8E5FF
+    BorderColor #5B50D6
+    ArrowColor #333333
+}
+
+actor "Usuário" as usuario
+
+rectangle "ContentFlow Mobile" {
+
+    package "Conta" {
+        usecase "UC01 - Criar conta" as UC01
+        usecase "UC02 - Fazer login" as UC02
+    }
+
+    package "Banco de Ideias" {
+        usecase "UC03 - Criar ideia" as UC03
+        usecase "UC04 - Visualizar ideias" as UC04
+        usecase "UC05 - Editar ideia" as UC05
+        usecase "UC06 - Excluir ideia" as UC06
+        usecase "UC07 - Transformar ideia em post" as UC07
+    }
+
+    package "Posts / Planejamento" {
+        usecase "UC08 - Criar post" as UC08
+        usecase "UC09 - Visualizar posts" as UC09
+        usecase "UC10 - Editar post" as UC10
+        usecase "UC11 - Excluir post" as UC11
+        usecase "UC12 - Alterar status do post" as UC12
+    }
+}
+
+' =========================
+' Interações do usuário
+' =========================
+
+usuario --> UC01
+usuario --> UC02
+
+usuario --> UC03
+usuario --> UC04
+usuario --> UC05
+usuario --> UC06
+usuario --> UC07
+
+usuario --> UC08
+usuario --> UC09
+usuario --> UC10
+usuario --> UC11
+usuario --> UC12
+
+' =========================
+' Relação entre Ideias e Posts
+' =========================
+
+UC07 ..> UC08 : <<include>>
+
+@enduml
