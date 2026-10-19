@@ -26,19 +26,19 @@ export default function Post() {
   //get all posts from the user
     const fetchPosts = async () => {
       try {
+        console.log(`/getAllPostsById/${user?.userId}`);
         const response = await api.get(`/getAllPostsById/${user?.userId}`);
+        console.log('response', response.data);
+
         setMyposts(response.data);
       } catch (error) {
         console.error('Erro ao buscar posts:', error);
       }
     };
 
-    if (user?.userId) {
-      fetchPosts();
-    }
+    fetchPosts();
   }, [user]);
 
-  console.log('myposts', myposts);
 
   const posts = [
     {
