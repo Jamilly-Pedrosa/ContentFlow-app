@@ -53,6 +53,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       const user_response: User = {
         firstName: response.data.name,
         email: response.data.email,
+        userId: response.data.id,
       };
       setUser(user_response);
       await saveToken(response.data.token);
