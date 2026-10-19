@@ -12,6 +12,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
+import { UserProvider } from '../contexts/userContext';
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -55,28 +57,28 @@ export default function RootLayout() {
 function RootLayoutNav() {
 
   return (
-    <ThemeProvider value={DefaultTheme}>
-      <Stack
-        screenOptions={{
-            contentStyle: {
-              backgroundColor: '#FFFFFF',
-            },
-          }}
-      >
-        <Stack.Screen
-            name="(auth)"
+    <UserProvider>
+      <ThemeProvider value={DefaultTheme}>
+        <Stack
+          screenOptions={{
+              contentStyle: {
+                backgroundColor: '#FFFFFF',
+              },
+            }}
+        >
+          <Stack.Screen
+              name="(auth)"
+              options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="(creation)"
             options={{ headerShown: false }}
-        />
-
-        <Stack.Screen
-          name="(creation)"
-          options={{ headerShown: false }}
-        />
-
-        <Stack.Screen 
-          name="(tabs)" 
-          options={{ headerShown: false }} />
-        </Stack>
-    </ThemeProvider>
+          />
+          <Stack.Screen
+            name="(tabs)"
+            options={{ headerShown: false }} />
+          </Stack>
+      </ThemeProvider>
+    </UserProvider>
   );
 }

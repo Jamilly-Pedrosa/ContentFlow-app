@@ -12,6 +12,7 @@ import {useState} from 'react';
 import { emailValidation, passwordValidation, confirmPasswordValidation, validateUser } from '../../utils/authValidation';
 
 import {useUser} from '../../contexts/userContext';
+import { getToken } from '../../utils/tokenServie';
 
 export default function Cadastro() {
   const [email, setEmail] = useState('');
@@ -21,9 +22,18 @@ export default function Cadastro() {
 
   const { loginUser } = useUser();
 
-  const logar = () => {
-    loginUser(email, password);
-    router.replace('/(tabs)');
+  const logar = async () => {
+    try {
+      await loginUser(email, password);
+
+      const token = await getToken();
+
+      if(token) {
+        router.replace('/(tabs)');  
+      }
+    }catch (error) {
+      console.log('Erro ao fazer login:', error);
+    }
   };
 
   return (
