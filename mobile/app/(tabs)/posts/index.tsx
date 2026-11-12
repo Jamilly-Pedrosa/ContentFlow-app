@@ -1,4 +1,3 @@
-
 import {
   ActivityIndicator,
   Pressable,
@@ -7,17 +6,21 @@ import {
   View,
 } from 'react-native';
 
-import { DotsThreeVerticalIcon } from 'phosphor-react-native';
+import { PostCard } from '../../../components/posts/PostCard';
+import CardStatusPost from '../../../components/posts/CardStatusPost';
+
 import { useState, useEffect, useCallback } from 'react';
 import api from '../../../utils/api';
 import { getToken } from '../../../utils/tokenServie';
+
+type PostStatus = 'Planejado' | 'Em andamento';
 
 type PostItem = {
   id: string;
   title: string;
   content: string;
   type: string;
-  status: string;
+  status: PostStatus;
   date: string;
 };
 
@@ -111,7 +114,7 @@ export default function Post() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 24 }}
       >
-        {/* Filtros */}
+        Filtros 
         <View className="mt-2 flex-row flex-wrap gap-2">
           <Pressable
             onPress={() => setActiveFilter('Todos')}
@@ -184,67 +187,18 @@ export default function Post() {
         ) : (
           /* Lista de posts */
           <View className="mt-4 gap-2 bg-white">
-            {filteredPosts.map((post) => {
-              const { day, month } = formatDate(post.date);
-
-              return (
-                <View
-                  key={post.id}
-                  className="flex-row items-center rounded-2xl bg-gray-50 p-2"
-                >
-                  {/* Data */}
-                  <View className="h-[60px] w-[55px] items-center justify-center rounded-xl bg-[#EEEEEE]">
-                    <Text className="text-2xl font-bold text-black">
-                      {day}
-                    </Text>
-
-                    <Text className="text-xs font-semibold text-gray-600">
-                      {month}
-                    </Text>
-                  </View>
-
-                  {/* Informações do post */}
-                  <View className="ml-3 flex-1">
-                    <Text className="text-sm text-[#222]">
-                      {post.title}
-                    </Text>
-
-                    <View
-                      className={`mt-2 self-start rounded-full px-3 py-1 ${
-                        post.status === 'Postado'
-                          ? 'bg-green-50'
-                          : post.status === 'Em andamento'
-                            ? 'bg-blue-50'
-                            : 'bg-purple-50'
-                      }`}
-                    >
-                      <Text
-                        className={`text-[10px] ${
-                          post.status === 'Postado'
-                            ? 'text-green-500'
-                            : post.status === 'Em andamento'
-                              ? 'text-blue-500'
-                              : 'text-purple-500'
-                        }`}
-                      >
-                        {post.status}
-                      </Text>
-                    </View>
-                  </View>
-
-                  {/* Opções */}
-                  <Pressable
-                    className="h-9 w-9 items-center justify-center rounded-full bg-[#E8E8E8]"
-                    accessibilityLabel="Opções do post"
-                  >
-                    <DotsThreeVerticalIcon
-                      size={20}
-                      color="#777"
-                    />
-                  </Pressable>
-                </View>
-              );
-            })}
+            {filteredPosts.map((post) => (
+              <PostCard
+                key={post.id}
+                title={post.title}
+                date={post.date}
+                status={<CardStatusPost status={post.status} />}
+                action="options"
+                onActionPress={() => {
+                  console.log('Opções do post:', post.id);
+                }}
+              />
+            ))}
 
             {filteredPosts.length === 0 && (
               <Text className="py-10 text-center text-sm text-gray-500">
