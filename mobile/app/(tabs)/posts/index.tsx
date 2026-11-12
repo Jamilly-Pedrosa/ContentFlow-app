@@ -192,7 +192,11 @@ export default function Post() {
                 key={post.id}
                 title={post.title}
                 date={post.date}
-                status={<CardStatusPost status={post.status} />}
+                status={
+                  <CardStatusPost 
+                    status={post.status} 
+                    size="small"
+                  />}
                 action="options"
                 onActionPress={() => {
                   console.log('Opções do post:', post.id);
