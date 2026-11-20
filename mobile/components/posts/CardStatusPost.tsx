@@ -7,6 +7,7 @@ interface CardStatusPostProps {
   selected?: boolean;
   onPress?: () => void;
   disabled?: boolean;
+  size?: 'default' | 'small';
 }
 
 const statusStyles = {
@@ -32,9 +33,11 @@ export default function CardStatusPost({
   selected = false,
   onPress,
   disabled = false,
+  size = 'default',
 }: CardStatusPostProps) {
   const colors = statusStyles[status];
   const isDisabled = disabled || !onPress;
+  const isSmall = size === 'small';
 
   return (
     <Pressable
@@ -50,6 +53,7 @@ export default function CardStatusPost({
         self-start flex-row items-center justify-center
         rounded-full border
         px-[18px] py-[14px]
+        ${isSmall ? 'px-4 py-1' : 'px-[18px] py-[16px]'}
         ${colors.background}
         ${selected ? colors.border : 'border-transparent'}
       `}
@@ -58,7 +62,11 @@ export default function CardStatusPost({
       }}
     >
       <Text
-        className={`text-legal-text font-poppins-regular ${colors.text}`}
+        className={`
+          font-poppins-regular
+          ${isSmall ? 'text-[10px]' : 'text-legal-text'}
+          ${colors.text}
+        `}
       >
         {status}
       </Text>
