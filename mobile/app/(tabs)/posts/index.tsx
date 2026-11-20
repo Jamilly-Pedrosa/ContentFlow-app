@@ -6,14 +6,15 @@ import {
   View,
 } from 'react-native';
 
+import { useState, useEffect, useCallback } from 'react';
+
 import { PostCard } from '../../../components/posts/PostCard';
 import CardStatusPost from '../../../components/posts/CardStatusPost';
 
-import { useState, useEffect, useCallback } from 'react';
 import api from '../../../utils/api';
 import { getToken } from '../../../utils/tokenServie';
 
-type PostStatus = 'Planejado' | 'Em andamento';
+type PostStatus = 'Planejado' | 'Em andamento' | 'Postado';
 
 type PostItem = {
   id: string;
@@ -30,6 +31,7 @@ export default function Post() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
+  // Buscar posts
   const fetchPosts = useCallback(async () => {
     try {
       setLoading(true);
@@ -43,16 +45,14 @@ export default function Post() {
         );
       }
 
-      // A rota identifica o usuário pelo token JWT.
-      // Não é necessário enviar o ID do usuário na URL.
       const response = await api.get('/getAllPostsById', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      // O controller retorna: { posts: [...] }
       setMyposts(response.data.posts ?? []);
+
     } catch (error: any) {
       console.error(
         'Erro ao buscar posts:',
@@ -74,6 +74,7 @@ export default function Post() {
     fetchPosts();
   }, [fetchPosts]);
 
+  // Filtros
   const filteredPosts =
     activeFilter === 'Todos'
       ? myposts
@@ -81,6 +82,7 @@ export default function Post() {
           (post) => post.status === activeFilter,
         );
 
+  // Contagem por status
   const planejados = myposts.filter(
     (post) => post.status === 'Planejado',
   ).length;
@@ -89,23 +91,20 @@ export default function Post() {
     (post) => post.status === 'Em andamento',
   ).length;
 
-  function formatDate(dateString: string) {
-    const date = new Date(dateString);
+  // Ações do dropdown
+  function handleEditPost(post: PostItem) {
+    console.log('Editar post:', post.id);
+    // TODO: Navegar para a tela de edição.
+  }
 
-    if (Number.isNaN(date.getTime())) {
-      return { day: '--', month: '--' };
-    }
+  function handleDeletePost(post: PostItem) {
+    console.log('Deletar post:', post.id);
+    // TODO: Implementar confirmação e exclusão pela API.
+  }
 
-    return {
-      day: String(date.getUTCDate()).padStart(2, '0'),
-      month: date
-        .toLocaleDateString('pt-BR', {
-          month: 'short',
-          timeZone: 'UTC',
-        })
-        .replace('.', '')
-        .toUpperCase(),
-    };
+  function handleViewDetails(post: PostItem) {
+    console.log('Detalhes do post:', post.id);
+    // TODO: Navegar para a tela de detalhes.
   }
 
   return (
@@ -114,8 +113,10 @@ export default function Post() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 24 }}
       >
-        Filtros 
+
+        {/* Filtros */}
         <View className="mt-2 flex-row flex-wrap gap-2">
+
           <Pressable
             onPress={() => setActiveFilter('Todos')}
             className={`rounded-full px-3 py-2 ${
@@ -154,6 +155,7 @@ export default function Post() {
               Em andamento ({emAndamento})
             </Text>
           </Pressable>
+
         </View>
 
         {/* Carregamento */}
@@ -168,7 +170,9 @@ export default function Post() {
               Carregando posts...
             </Text>
           </View>
+
         ) : errorMessage ? (
+
           /* Erro */
           <View className="items-center px-4 py-10">
             <Text className="text-center text-sm text-red-500">
@@ -184,23 +188,26 @@ export default function Post() {
               </Text>
             </Pressable>
           </View>
+
         ) : (
+
           /* Lista de posts */
-          <View className="mt-4 gap-2 bg-white">
+          <View className="mt-4 gap-2">
             {filteredPosts.map((post) => (
               <PostCard
                 key={post.id}
                 title={post.title}
                 date={post.date}
                 status={
-                  <CardStatusPost 
-                    status={post.status} 
+                  <CardStatusPost
+                    status={post.status}
                     size="small"
-                  />}
+                  />
+                }
                 action="options"
-                onActionPress={() => {
-                  console.log('Opções do post:', post.id);
-                }}
+                onEdit={() => handleEditPost(post)}
+                onDelete={() => handleDeletePost(post)}
+                onDetails={() => handleViewDetails(post)}
               />
             ))}
 
@@ -211,6 +218,7 @@ export default function Post() {
             )}
           </View>
         )}
+
       </ScrollView>
     </View>
   );
