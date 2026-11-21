@@ -1,16 +1,19 @@
 import { View, Text, Pressable } from 'react-native';
-import {
-  DotsThreeVerticalIcon,
-  CaretRightIcon,
-} from 'phosphor-react-native';
+import { CaretRightIcon } from 'phosphor-react-native';
 import type { ReactNode } from 'react';
+
+import ActionsDropdown from '../ActionsDropdown/ActionsDropdown';
 
 interface PostCardProps {
   title: string;
   date: string;
   status: ReactNode;
+
   action?: 'options' | 'navigate';
-  onActionPress?: () => void;
+
+  onEdit?: () => void;
+  onDelete?: () => void;
+  onDetails?: () => void;
 }
 
 export function PostCard({
@@ -18,8 +21,11 @@ export function PostCard({
   date,
   status,
   action = 'options',
-  onActionPress,
+  onEdit,
+  onDelete,
+  onDetails,
 }: PostCardProps) {
+
   function formatDate(dateString: string) {
     const parsedDate = new Date(dateString);
 
@@ -42,9 +48,10 @@ export function PostCard({
   const { day, month } = formatDate(date);
 
   return (
-    <View className="flex-row items-center rounded-2xl bg-gray-50 p-2">
+    <View className="flex-row items-center rounded-2xl bg-gray-50 p-2 overflow-visible">
+
       {/* Data */}
-      <View className="w-[70px] h-[80px] items-center justify-center rounded-xl bg-gray-100">
+      <View className="h-[80px] w-[70px] items-center justify-center rounded-xl bg-gray-100">
         <Text className="text-heading-1 font-poppins-medium text-black">
           {day}
         </Text>
@@ -69,23 +76,24 @@ export function PostCard({
       </View>
 
       {/* Ação */}
-      <Pressable
-        onPress={onActionPress}
-        disabled={!onActionPress}
-        accessibilityRole="button"
-        accessibilityLabel={
-          action === 'options'
-            ? 'Opções do post'
-            : 'Visualizar post'
-        }
-        className="w-[38px] h-[38px] items-center justify-center rounded-full bg-gray-100"
-      >
-        {action === 'options' ? (
-          <DotsThreeVerticalIcon size={24} color="#777777" />
-        ) : (
+      {action === 'options' ? (
+        <ActionsDropdown
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onDetails={onDetails}
+        />
+      ) : (
+        <Pressable
+          onPress={onDetails}
+          disabled={!onDetails}
+          accessibilityRole="button"
+          accessibilityLabel="Visualizar post"
+          className="h-[38px] w-[38px] items-center justify-center rounded-full bg-gray-100"
+        >
           <CaretRightIcon size={24} color="#777777" />
-        )}
-      </Pressable>
+        </Pressable>
+      )}
+
     </View>
   );
 }
