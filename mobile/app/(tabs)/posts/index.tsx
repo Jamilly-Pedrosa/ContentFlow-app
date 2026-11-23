@@ -97,9 +97,21 @@ export default function Post() {
     // TODO: Navegar para a tela de edição.
   }
 
-  function handleDeletePost(post: PostItem) {
+  async function handleDeletePost(post: PostItem) {
     console.log('Deletar post:', post.id);
-    // TODO: Implementar confirmação e exclusão pela API.
+    
+    const response = await api.delete(`/posts/${post.id}/delete`, {
+      headers: {
+        Authorization: `Bearer ${await getToken()}`,
+      },
+    });
+
+    if (response.status === 200) {
+      console.log('Post deletado com sucesso:', response.data);
+      fetchPosts(); // Atualiza a lista de posts após a exclusão
+    } else {
+      console.error('Erro ao deletar post:', response.data);
+    } 
   }
 
   function handleViewDetails(post: PostItem) {

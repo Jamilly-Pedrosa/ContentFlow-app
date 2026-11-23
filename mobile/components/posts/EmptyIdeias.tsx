@@ -1,5 +1,6 @@
 import { Text, View, Image } from 'react-native';
 import { Button } from '../ui/Button';
+import { router } from 'expo-router';
 
 export default function EmptyIdeias() {
   return (
@@ -31,7 +32,7 @@ export default function EmptyIdeias() {
         <Button
           type="primary"
           size="M"
-          //onPress={() => router.replace('/(tabs)')}
+          onPress={() => router.replace('/(creation)/criar-ideia')}
         >
           Criar nova ideia
         </Button>

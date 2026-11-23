@@ -9,10 +9,47 @@ import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
+import api from '../../utils/api';
+import { getToken } from '../../utils/tokenServie';
+
 export default function CriarIdeia() {
   const [ideiaTitulo, setIdeiaTitulo] = useState('');
-  //const [categoria, setCategoria] = useState('');
   const [legenda, setLegenda] = useState('');
+
+  const token = getToken();
+
+  const handleSalvarIdeia = async () => {
+    try {
+      const token = await getToken();
+
+      if (!token) {
+        throw new Error('Token não encontrado. Faça login novamente.');
+      }
+
+      const response = await api.post(
+        '/createIdeia',
+        {
+          title: ideiaTitulo,
+          content: legenda,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      router.replace('/(tabs)/posts/ideias');
+
+    } catch (error: any) {
+      console.error(
+        'Erro ao criar ideia:',
+        error.response?.status,
+        error.response?.data ?? error.message,
+      );
+    }
+  };
+
+  
 
   return (
     <SafeAreaView className="flex-1">
@@ -20,7 +57,13 @@ export default function CriarIdeia() {
 
             <Header
                 title="Nova Ideia"
-                onBackPress={() => router.back()}
+                onBackPress={() => {
+                    if (router.canGoBack()) {
+                    router.back();
+                    } else {
+                    router.replace('/(tabs)');
+                    }
+                }}
             />
 
             <KeyboardAvoidingView
@@ -93,7 +136,7 @@ export default function CriarIdeia() {
                 <Button
                 type="primary"
                 size="L"
-                onPress={() => router.replace('/(tabs)')}
+                onPress={handleSalvarIdeia}
                 >
                 Salvar
                 </Button>

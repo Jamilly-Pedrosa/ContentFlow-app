@@ -1,11 +1,4 @@
 
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container } from '../../components/layout/Container';
-import { Header } from '../../components/layout/Header';
-import { router } from 'expo-router';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { TextArea } from '../../components/ui/TextArea';
 import { useState } from 'react';
 import {
   Alert,
@@ -14,133 +7,166 @@ import {
   Text,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { router } from 'expo-router';
 import { CalendarBlankIcon } from 'phosphor-react-native';
+
+import { Container } from '../../components/layout/Container';
+import { Header } from '../../components/layout/Header';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
+import { TextArea } from '../../components/ui/TextArea';
 import CardStatusPost from '../../components/posts/CardStatusPost';
 import Upload from '@/components/uploadoImg/Upload';
 
 import { getToken } from '@/utils/tokenServie';
 import api from '@/utils/api';
 
+type PostStatus = 'Planejado' | 'Em andamento' | 'Postado';
+
+type SelectedFile = {
+  uri: string;
+  name: string;
+  mimeType: string;
+  size?: number;
+};
+
 export default function CriarPost() {
   const [postTitulo, setPostTitulo] = useState('');
   const [legenda, setLegenda] = useState('');
+  const [categoryName, setCategoryName] = useState('');
   const [dataPublicacao, setDataPublicacao] = useState('');
-  const [status, setStatus] = useState<
-    'Planejado' | 'Em andamento' | 'Postado'
-  >('Planejado');
-  const [imageUri, setImageUri] = useState<string | null>(null);
+
+  const [status, setStatus] = useState<PostStatus>('Planejado');
+  const [selectedImage, setSelectedImage] = useState<SelectedFile | null>(null);
   const [salvando, setSalvando] = useState(false);
 
-  
-    async function handleSave() {
-    const title = postTitulo.trim();
-    const content = legenda.trim();
-    const dateText = dataPublicacao.trim();
-
-    if (!title || !content || !dateText) {
-        Alert.alert(
-        'Campos obrigatórios',
-        'Preencha o título, a legenda e a data de publicação.',
-        );
-        return;
-    }
-
-    if (title.length > 40) {
-        Alert.alert('Título muito longo', 'O título deve ter até 40 caracteres.');
-        return;
-    }
-
-    if (content.length > 200) {
-        Alert.alert(
-        'Legenda muito longa',
-        'A legenda deve ter até 200 caracteres.',
-        );
-        return;
-    }
-
+  function validarData(dateText: string): string | null {
     const dateMatch = dateText.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
 
-    if (!dateMatch) {
-        Alert.alert('Data inválida', 'Use o formato DD/MM/AAAA.');
-        return;
-    }
+    if (!dateMatch) return null;
 
     const [, dia, mes, ano] = dateMatch;
 
     const data = new Date(
-        Number(ano),
-        Number(mes) - 1,
-        Number(dia),
-        12,
+      Number(ano),
+      Number(mes) - 1,
+      Number(dia),
+      12,
     );
 
-    if (
-        data.getFullYear() !== Number(ano) ||
-        data.getMonth() !== Number(mes) - 1 ||
-        data.getDate() !== Number(dia)
-    ) {
-        Alert.alert('Data inválida', 'Informe uma data existente.');
-        return;
+    const dataValida =
+      data.getFullYear() === Number(ano) &&
+      data.getMonth() === Number(mes) - 1 &&
+      data.getDate() === Number(dia);
+
+    return dataValida ? data.toISOString() : null;
+  }
+
+  function validarFormulario(): string | null {
+    const title = postTitulo.trim();
+    const content = legenda.trim();
+    const category = categoryName.trim();
+
+    if (!title || !content || !dataPublicacao.trim() || !category) {
+      return 'Preencha o título, a legenda, a categoria e a data de publicação.';
     }
 
-    const postData = {
-        title,
-        content,
-        type: 'Post',
-        status,
-        date: data.toISOString(),
-    };
+    if (title.length > 40) {
+      return 'O título deve ter até 40 caracteres.';
+    }
+
+    if (content.length > 200) {
+      return 'A legenda deve ter até 200 caracteres.';
+    }
+
+    if (!validarData(dataPublicacao.trim())) {
+      return 'Informe uma data válida no formato DD/MM/AAAA.';
+    }
+
+    return null;
+  }
+
+  async function handleSave() {
+    if (salvando) return;
+
+    const erroValidacao = validarFormulario();
+
+    if (erroValidacao) {
+      Alert.alert('Verifique os dados', erroValidacao);
+      return;
+    }
 
     try {
-        setSalvando(true);
+      setSalvando(true);
 
-        const token = await getToken();
+      const token = await getToken();
 
-        if (!token) {
+      if (!token) {
         Alert.alert(
-            'Sessão expirada',
-            'Faça login novamente para criar um post.',
+          'Sessão expirada',
+          'Faça login novamente para criar um post.',
         );
         return;
-        }
+      }
 
-        // Requisição para criar o post.
-        // Ajuste '/createPost' caso sua rota no Express seja diferente.
-        const response = await api.post('/createPost', postData, {
+      const formData = new FormData();
+
+      formData.append('title', postTitulo.trim());
+      formData.append('content', legenda.trim());
+      formData.append('type', 'Post');
+      formData.append('status', status);
+      formData.append('date', validarData(dataPublicacao.trim())!);
+      formData.append('categoryName', categoryName.trim());
+
+      if (selectedImage) {
+        formData.append(
+          'image',
+          {
+            uri: selectedImage.uri,
+            name: selectedImage.name,
+            type: selectedImage.mimeType,
+          } as any,
+        );
+      }
+
+      console.log('Categoria enviada:', categoryName.trim());
+      console.log('Imagem enviada:', selectedImage ?? 'Nenhuma imagem');
+
+      const response = await api.post('/createPost', formData, {
         headers: {
-            Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
-        });
+      });
 
-        console.log('Post criado:', response.data);
+      console.log('Post criado:', response.data);
 
-        Alert.alert(
+      Alert.alert(
         'Sucesso!',
         'Seu post foi criado com sucesso.',
         [
-            {
+          {
             text: 'OK',
             onPress: () => router.replace('/(tabs)'),
-            },
+          },
         ],
-        );
+      );
     } catch (error: any) {
-        console.error(
+      console.error(
         'Erro ao criar post:',
         error.response?.data ?? error.message,
-        );
+      );
 
-        const mensagem =
+      const mensagem =
         error.response?.data?.error ??
         'Não foi possível criar o post. Tente novamente.';
 
-        Alert.alert('Erro ao criar post', mensagem);
+      Alert.alert('Erro ao criar post', mensagem);
     } finally {
-        setSalvando(false);
+      setSalvando(false);
     }
-    }
-
+  }
 
   return (
     <SafeAreaView className="flex-1">
@@ -168,15 +194,13 @@ export default function CriarPost() {
             keyboardDismissMode="on-drag"
           >
             <View className="my-4 gap-6">
-              <View>
-                <Input
-                  label="Título"
-                  placeholder="Digite o título do post"
-                  value={postTitulo}
-                  onChangeText={setPostTitulo}
-                  accessibilityLabel="Título do post"
-                />
-              </View>
+              <Input
+                label="Título"
+                placeholder="Digite o título do post"
+                value={postTitulo}
+                onChangeText={setPostTitulo}
+                accessibilityLabel="Título do post"
+              />
 
               <View className="gap-2">
                 <TextArea
@@ -188,20 +212,24 @@ export default function CriarPost() {
                 />
               </View>
 
-              <View>
-                <Input
-                  label="Data de publicação"
-                  placeholder="DD/MM/AAAA"
-                  rightIcon={CalendarBlankIcon}
-                  value={dataPublicacao}
-                  onChangeText={setDataPublicacao}
-                  accessibilityLabel="Data de publicação"
-                />
-              </View>
+              <Input
+                label="Categoria"
+                placeholder="Digite a categoria do post"
+                value={categoryName}
+                onChangeText={setCategoryName}
+                accessibilityLabel="Categoria do post"
+              />
 
-              <View>
-                <Upload onSelectFile={setImageUri} />
-              </View>
+              <Input
+                label="Data de publicação"
+                placeholder="DD/MM/AAAA"
+                rightIcon={CalendarBlankIcon}
+                value={dataPublicacao}
+                onChangeText={setDataPublicacao}
+                accessibilityLabel="Data de publicação"
+              />
+
+              <Upload onSelectFile={setSelectedImage} />
 
               <View>
                 <Text className="mb-4 font-poppins-medium text-small-text text-[#1A1A1A]">
@@ -238,7 +266,7 @@ export default function CriarPost() {
             size="L"
             onPress={handleSave}
           >
-            Salvar
+            {salvando ? 'Salvando...' : 'Salvar'}
           </Button>
         </View>
       </Container>
