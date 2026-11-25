@@ -41,7 +41,7 @@ export default function CreateDrawer({
             style={styles.action}
             onPress={() => {
               close();
-              router.push('/(creation)/criar-post');
+              router.push('/(creation)/post/criar-post');
             }}
             accessibilityRole="button"
           >
@@ -58,7 +58,7 @@ export default function CreateDrawer({
             style={styles.action}
             onPress={() => {
               close();
-              router.push('/(creation)/criar-ideia');
+              router.push('/(creation)/ideia/criar-ideia');
             }}
             accessibilityRole="button"
           >

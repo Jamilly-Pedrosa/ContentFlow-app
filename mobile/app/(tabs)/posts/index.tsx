@@ -14,6 +14,8 @@ import CardStatusPost from '../../../components/posts/CardStatusPost';
 import api from '../../../utils/api';
 import { getToken } from '../../../utils/tokenServie';
 
+import { useRouter } from 'expo-router';
+
 type PostStatus = 'Planejado' | 'Em andamento' | 'Postado';
 
 type PostItem = {
@@ -31,6 +33,8 @@ export default function Post() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const router = useRouter();
+
   // Buscar posts
   const fetchPosts = useCallback(async () => {
     try {
@@ -45,7 +49,7 @@ export default function Post() {
         );
       }
 
-      const response = await api.get('/getAllPostsById', {
+      const response = await api.get('/getAllPosts', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -93,12 +97,11 @@ export default function Post() {
 
   // Ações do dropdown
   function handleEditPost(post: PostItem) {
-    console.log('Editar post:', post.id);
+    router.push({pathname: '/(creation)/post/[id]', params: { id: post.id }});
     // TODO: Navegar para a tela de edição.
   }
 
   async function handleDeletePost(post: PostItem) {
-    console.log('Deletar post:', post.id);
     
     const response = await api.delete(`/posts/${post.id}/delete`, {
       headers: {

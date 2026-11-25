@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect, use } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -32,7 +32,12 @@ type SelectedFile = {
   size?: number;
 };
 
-export default function CriarPost() {
+type PostFormProps = {
+  mode: 'create' | 'edit';
+  postId?: string;
+};
+
+export default function CriarPost({mode, postId}: PostFormProps) {
   const [postTitulo, setPostTitulo] = useState('');
   const [legenda, setLegenda] = useState('');
   const [categoryName, setCategoryName] = useState('');
@@ -41,6 +46,44 @@ export default function CriarPost() {
   const [status, setStatus] = useState<PostStatus>('Planejado');
   const [selectedImage, setSelectedImage] = useState<SelectedFile | null>(null);
   const [salvando, setSalvando] = useState(false);
+
+  useEffect(() => {
+    if (mode === 'edit' && postId) {
+      const fetchPost = async () => {
+        try {
+          const token = await getToken();
+
+          if (!token) {
+            throw new Error('Token não encontrado. Faça login novamente.');
+          }
+
+          const response = await api.get(`/posts/${postId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const postData = response.data;
+          setPostTitulo(postData.post.title);
+          setLegenda(postData.post.content);
+          setCategoryName(postData.post.category.name);
+          setDataPublicacao(
+            new Date(postData.post.date).toLocaleDateString('pt-BR'),
+          );
+          setStatus(postData.post.status);
+
+        } catch (error: any) {
+          console.error(
+            'Erro ao buscar post:',
+            error.response?.status,
+            error.response?.data ?? error.message,
+          );
+        }
+      };
+
+      fetchPost();
+    }
+  }, [mode, postId]);
 
   function validarData(dateText: string): string | null {
     const dateMatch = dateText.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
@@ -65,12 +108,12 @@ export default function CriarPost() {
   }
 
   function validarFormulario(): string | null {
-    const title = postTitulo.trim();
-    const content = legenda.trim();
-    const category = categoryName.trim();
+    const title = postTitulo;
+    const content = legenda;
+    const category = categoryName;
 
-    if (!title || !content || !dataPublicacao.trim() || !category) {
-      return 'Preencha o título, a legenda, a categoria e a data de publicação.';
+    if (!title.trim() || !content.trim() || !category.trim()) {
+      return 'Todos os campos são obrigatórios.';
     }
 
     if (title.length > 40) {
@@ -98,7 +141,7 @@ export default function CriarPost() {
       return;
     }
 
-    try {
+
       setSalvando(true);
 
       const token = await getToken();
@@ -131,48 +174,42 @@ export default function CriarPost() {
         );
       }
 
-      console.log('Categoria enviada:', categoryName.trim());
-      console.log('Imagem enviada:', selectedImage ?? 'Nenhuma imagem');
-
-      const response = await api.post('/createPost', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      console.log('Post criado:', response.data);
-
-      Alert.alert(
-        'Sucesso!',
-        'Seu post foi criado com sucesso.',
-        [
+      if (mode === 'edit' && postId) {
+        const response = await api.patch(
+          `/posts/${postId}/edit`,
+          formData,
           {
-            text: 'OK',
-            onPress: () => router.replace('/(tabs)'),
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
           },
-        ],
-      );
-    } catch (error: any) {
-      console.error(
-        'Erro ao criar post:',
-        error.response?.data ?? error.message,
-      );
+        );
 
-      const mensagem =
-        error.response?.data?.error ??
-        'Não foi possível criar o post. Tente novamente.';
+        router.replace('/(tabs)/posts');
 
-      Alert.alert('Erro ao criar post', mensagem);
-    } finally {
-      setSalvando(false);
-    }
+      } else {
+        const response = await api.post(
+          '/createPost',
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          },
+        );
+
+        router.replace('/(tabs)/posts');
+      }
+
   }
 
   return (
     <SafeAreaView className="flex-1">
       <Container className="flex-1">
         <Header
-          title="Novo Post"
+          title={mode === 'create' ? 'Criar Post' : 'Editar Post'}
           onBackPress={() => router.back()}
         />
 

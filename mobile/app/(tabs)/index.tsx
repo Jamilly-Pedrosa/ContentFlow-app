@@ -8,6 +8,9 @@ import {
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import api from '../../utils/api';
+import { getToken } from '../../utils/tokenServie';
+import { useEffect, useState } from 'react';
 
 import {
   BellIcon,
@@ -21,8 +24,56 @@ import {
 import { useUser } from '../../contexts/userContext';
 
 export default function TabOneScreen() {
+  const [ideiasPlanejadas, setIdeiasPlanejadas] = useState(0);
+  const [ideiasEmAndamento, setIdeiasEmAndamento] = useState(0);
+  const [ideiasConcluidas, setIdeiasConcluidas] = useState(0);
 
   const { user } = useUser();
+
+  useEffect(() => {
+    const fetchIdeias = async () => {
+      try {
+        const token = await getToken();
+
+        if (!token) {
+          throw new Error('Token não encontrado. Faça login novamente.');
+        }
+
+        const response = await api.get('/getAllPosts', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const posts = response.data.posts;
+
+        const planejadas = posts.filter(
+          (post: any) => post.status == 'Planejado'
+        ).length;
+
+        const emAndamento = posts.filter(
+          (post: any) => post.status == 'Em andamento'
+        ).length;
+
+        const concluidas = posts.filter(
+          (post: any) => post.status == 'Postado'
+        ).length;
+
+        setIdeiasPlanejadas(planejadas);
+        setIdeiasEmAndamento(emAndamento);
+        setIdeiasConcluidas(concluidas);
+
+      } catch (error: any) {
+        console.error(
+          'Erro ao buscar posts:',
+          error.response?.status,
+          error.response?.data ?? error.message
+        );
+      }
+    };
+
+    fetchIdeias();
+  }, []);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -88,7 +139,7 @@ export default function TabOneScreen() {
                   </Text>
 
                   <Text className="text-white text-3xl mt-1">
-                    0
+                    {ideiasPlanejadas}
                   </Text>
                 </View>
 
@@ -106,7 +157,7 @@ export default function TabOneScreen() {
                   </Text>
 
                   <Text className="text-white text-3xl mt-1">
-                    0
+                    {ideiasEmAndamento}
                   </Text>
                 </View>
 
@@ -124,7 +175,7 @@ export default function TabOneScreen() {
                   </Text>
 
                   <Text className="text-white text-3xl mt-1">
-                    0
+                    {ideiasConcluidas}
                   </Text>
                 </View>
 

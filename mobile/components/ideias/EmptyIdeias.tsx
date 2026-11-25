@@ -32,7 +32,7 @@ export default function EmptyIdeias() {
         <Button
           type="primary"
           size="M"
-          onPress={() => router.replace('/(creation)/criar-ideia')}
+          onPress={() => router.replace('/(creation)/ideia/criar-ideia')}
         >
           Criar nova ideia
         </Button>

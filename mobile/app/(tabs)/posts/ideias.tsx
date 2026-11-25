@@ -1,5 +1,5 @@
 import { Text, View, Image, ScrollView } from 'react-native';
-import EmptyIdeias from '../../../components/posts/EmptyIdeias';
+import EmptyIdeias from '../../../components/ideias/EmptyIdeias';
 
 import api from '../../../utils/api';
 import { getToken } from '../../../utils/tokenServie';
@@ -108,6 +108,7 @@ export default function Ideias() {
               title={ideia.title}
               onPlan={() => planejar(ideia)}
               onDelete={() => deleteIdeia(ideia.id)}
+              onEdit={() => router.push({pathname: '/(creation)/ideia/[id]', params: { id: ideia.id }})}
               isUsed={ideia.isPlanned}
             />
           ))}
