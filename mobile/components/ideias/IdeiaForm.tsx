@@ -1,26 +1,125 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container } from '../../components/layout/Container';
-import { Header } from '../../components/layout/Header';
+import { Container } from '../layout/Container';
+import { Header } from '../layout/Header';
 import { router } from 'expo-router';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { TextArea } from '../../components/ui/TextArea';
+import { Button } from '../ui/Button';
+import { Input } from '../ui/Input';
+import { TextArea } from '../ui/TextArea';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useEffect } from 'react';
 
-export default function CriarIdeia() {
+import api from '../../utils/api';
+import { getToken } from '../../utils/tokenServie';
+
+type IdeiaFormProps = {
+  mode: 'create' | 'edit';
+  ideiaId?: string;
+};
+
+export default function IdeiaForm({ mode, ideiaId }: IdeiaFormProps) {
   const [ideiaTitulo, setIdeiaTitulo] = useState('');
-  //const [categoria, setCategoria] = useState('');
   const [legenda, setLegenda] = useState('');
+
+  useEffect(() => {
+    if (mode === 'edit' && ideiaId) {
+      const fetchIdeia = async () => {
+        try {
+          const token = await getToken();
+
+          if (!token) {
+            throw new Error('Token não encontrado. Faça login novamente.');
+          }
+
+          const response = await api.get(`/getIdeiaById/${ideiaId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const ideiaData = response.data;
+          setIdeiaTitulo(ideiaData.title);
+          setLegenda(ideiaData.content);
+        } catch (error: any) {
+          console.error(
+            'Erro ao buscar ideia:',
+            error.response?.status,
+            error.response?.data ?? error.message,
+          );
+        }
+      };
+
+      fetchIdeia();
+    }
+  }, [mode, ideiaId]);
+
+  const token = getToken();
+
+  const handleSalvarIdeia = async () => {
+    try {
+      const token = await getToken();
+
+      if (!token) {
+        throw new Error('Token não encontrado. Faça login novamente.');
+      }
+
+      if(mode === 'edit' && ideiaId) {
+        const response = await api.put(
+          `/editIdeia/${ideiaId}`,
+          {
+            title: ideiaTitulo,
+            content: legenda,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        router.replace('/(tabs)/posts/ideias');
+      } else {
+         const response = await api.post(
+            '/createIdeia',
+            {
+              title: ideiaTitulo,
+              content: legenda,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          router.replace('/(tabs)/posts/ideias');
+
+        }
+      }
+
+    catch (error: any) {
+      console.error(
+        'Erro ao salvar ideia:',
+        error.response?.status,
+        error.response?.data ?? error.message,
+      );
+    }
+  };
+  
 
   return (
     <SafeAreaView className="flex-1">
         <Container className="flex-1">
 
             <Header
-                title="Nova Ideia"
-                onBackPress={() => router.back()}
+                title={mode === 'create' ? 'Nova Ideia' : 'Editar Ideia'}
+                onBackPress={() => {
+                    if (router.canGoBack()) {
+                    router.back();
+                    } else {
+                    router.replace('/(tabs)');
+                    }
+                }}
             />
 
             <KeyboardAvoidingView
@@ -93,7 +192,7 @@ export default function CriarIdeia() {
                 <Button
                 type="primary"
                 size="L"
-                onPress={() => router.replace('/(tabs)')}
+                onPress={handleSalvarIdeia}
                 >
                 Salvar
                 </Button>
