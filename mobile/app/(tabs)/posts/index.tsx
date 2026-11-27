@@ -227,6 +227,7 @@ export default function Post() {
                 onEdit={() => handleEditPost(post)}
                 onDelete={() => handleDeletePost(post)}
                 onDetails={() => handleViewDetails(post)}
+                onPress={() => handleViewDetails(post)}
               />
             ))}
 

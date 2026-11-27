@@ -10,7 +10,8 @@ interface PostCardProps {
   status: ReactNode;
 
   action?: 'options' | 'navigate';
-
+  
+  onPress?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
   onDetails?: () => void;
@@ -21,6 +22,7 @@ export function PostCard({
   date,
   status,
   action = 'options',
+  onPress,
   onEdit,
   onDelete,
   onDetails,
@@ -50,6 +52,15 @@ export function PostCard({
   return (
     <View className="flex-row items-center rounded-2xl bg-gray-50 p-2 overflow-visible">
 
+      {/* Área clicável do card */}
+      <Pressable
+        onPress={onPress}
+        disabled={!onPress}
+        accessibilityRole="button"
+        accessibilityLabel={`Visualizar detalhes do post ${title}`}
+        className="flex-1 flex-row items-center"
+      >
+
       {/* Data */}
       <View className="h-[80px] w-[70px] items-center justify-center rounded-xl bg-gray-100">
         <Text className="text-heading-1 font-poppins-medium text-black">
@@ -74,6 +85,7 @@ export function PostCard({
           {status}
         </View>
       </View>
+      </Pressable>
 
       {/* Ação */}
       {action === 'options' ? (
