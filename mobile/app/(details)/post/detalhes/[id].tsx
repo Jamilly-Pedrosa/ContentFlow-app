@@ -6,6 +6,7 @@ import {
   ScrollView,
   Text,
   View,
+  Image,
 } from 'react-native';
 
 import { useLocalSearchParams, router } from 'expo-router';
@@ -13,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Container } from '@/components/layout/Container';
 import { Header } from '@/components/layout/Header';
+import CardStatusPost from '@/components/posts/CardStatusPost';
 
 import api from '@/utils/api';
 import { getToken } from '@/utils/tokenServie';
@@ -28,7 +30,15 @@ type PostDetailsData = {
   status: PostStatus;
   type: string;
   date: string;
-  images: any[];
+
+  images: {
+    id: string;
+    path: string;
+    mimeType: string;
+    size: number;
+    url: string;
+  }[];
+
   category?: {
     id: string;
     name: string;
@@ -41,6 +51,7 @@ export default function PostDetails() {
   const [post, setPost] = useState<PostDetailsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
+  const [imageRatios, setImageRatios] = useState<Record<string, number>>({});
 
   useEffect(() => {
     async function fetchPost() {
@@ -60,12 +71,13 @@ export default function PostDetails() {
           },
         });
 
+        setPost(response.data.post);
+
         console.log(
-          'Dados do post:',
-          JSON.stringify(response.data, null, 2),
+          'IMAGENS DO POST:',
+          JSON.stringify(response.data.post.images, null, 2),
         );
 
-        setPost(response.data.post);
       } catch (error: any) {
         console.error(
           'Erro ao buscar detalhes do post:',
@@ -87,18 +99,30 @@ export default function PostDetails() {
     }
   }, [id]);
 
+  function formatDate(date: string) {
+    return new Date(date).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit',
+    });
+  }
+
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView className="flex-1 bg-white">
       <Container className="flex-1">
+
+        {/* Header */}
         <Header
-          title="Detalhes do post"
+          title="Detalhes"
           onBackPress={() => router.back()}
           rightIcon={NotePencilIcon}
           rightIconLabel="Opção de editar"
           onRightPress={() => {
+            if (!post) return;
+
             router.push({
               pathname: '/(creation)/post/[id]',
-              params: { id: post?.id },
+              params: { id: post.id },
             });
           }}
         />
@@ -121,69 +145,84 @@ export default function PostDetails() {
           <ScrollView
             showsVerticalScrollIndicator={false}
             className="flex-1"
+            contentContainerStyle={{
+              paddingBottom: 32,
+            }}
           >
-            <View className="mt-6 gap-5 pb-8">
+            <View className="mt-6 gap-6">
+
+              {/* Informações rápidas */}
+              <View className="flex-row flex-wrap justify-center gap-2 mt-4 mb-4">
+
+                {/* Data */}
+                {post.date && (
+                  <View className="rounded-full bg-blue-50 px-3 py-2">
+                    <Text className="font-poppins-regular text-small-text text-gray-900">
+                      {formatDate(post.date)}
+                    </Text>
+                  </View>
+                )}
+
+                {/* Categoria */}
+                {post.category?.name && (
+                  <View className="rounded-full bg-blue-50 px-3 py-2">
+                    <Text className="font-poppins-regular text-small-text text-gray-900">
+                      {post.category.name}
+                    </Text>
+                  </View>
+                )}
+
+                {/* Status */}
+                {post.status && (
+                  <View className="rounded-full bg-blue-50 px-3 py-2">
+                    <Text className="font-poppins-regular text-small-text text-gray-900">
+                      {post.status}
+                    </Text>
+                  </View>
+                )}
+
+              </View>
 
               {/* Título */}
-              <View className="gap-1">
-                <Text className="text-sm text-gray-500">
-                  Título
-                </Text>
+              <Text className="font-poppins-semibold text-large-text text-black">
+                {post.title}
+              </Text>
 
-                <Text className="text-xl font-bold text-gray-900">
-                  {post.title}
-                </Text>
-              </View>
+              {/* Imagens */}
+              {post.images && post.images.length > 0 && (
+                <View className="gap-3">
+                  {post.images.map((image) => (
+                    <Image
+                      key={image.id}
+                      source={{ uri: image.url }}
+                      resizeMode="contain"
+                      onLoad={(event) => {
+                        const { width, height } = event.nativeEvent.source;
 
-              {/* Status */}
-              <View className="gap-1">
-                <Text className="text-sm text-gray-500">
-                  Status
-                </Text>
-
-                <Text className="text-base font-medium text-gray-900">
-                  {post.status}
-                </Text>
-              </View>
-
-              {/* Categoria */}
-              {post.category?.name && (
-                <View className="gap-1">
-                  <Text className="text-sm text-gray-500">
-                    Categoria
-                  </Text>
-
-                  <Text className="text-base text-gray-900">
-                    {post.category.name}
-                  </Text>
-                </View>
-              )}
-
-              {/* Data de publicação */}
-              {post.date && (
-                <View className="gap-1">
-                  <Text className="text-sm text-gray-500">
-                    Data de publicação
-                  </Text>
-
-                  <Text className="text-base text-gray-900">
-                    {new Date(post.date).toLocaleDateString('pt-BR')}
-                  </Text>
+                        if (width && height) {
+                          setImageRatios((current) => ({
+                            ...current,
+                            [image.id]: width / height,
+                          }));
+                        }
+                      }}
+                      style={{
+                        width: '100%',
+                        aspectRatio: imageRatios[image.id] ?? 1,
+                        borderRadius: 18,
+                      }}
+                      accessibilityLabel={`Imagem do post ${post.title}`}
+                    />
+                  ))}
                 </View>
               )}
 
               {/* Legenda */}
-              {post.content && (
-                <View className="gap-1">
-                  <Text className="text-sm text-gray-500">
-                    Legenda
-                  </Text>
-
-                  <Text className="text-base leading-6 text-gray-900">
-                    {post.content}
-                  </Text>
-                </View>
-              )}
+              {post.content ? (
+                <Text className="font-poppins-regular text-body-text leading-6 text-black">
+                  {post.content}
+                </Text>
+              ) : null}
 
             </View>
           </ScrollView>
@@ -194,6 +233,7 @@ export default function PostDetails() {
             </Text>
           </View>
         )}
+
       </Container>
     </SafeAreaView>
   );
