@@ -5,7 +5,7 @@ import {
   Text,
   View,
 } from 'react-native';
-
+import { router } from 'expo-router'; //
 import { useState, useEffect, useCallback } from 'react';
 
 import { PostCard } from '../../../components/posts/PostCard';
@@ -117,9 +117,13 @@ export default function Post() {
     } 
   }
 
-  function handleViewDetails(post: PostItem) {
-    console.log('Detalhes do post:', post.id);
-    // TODO: Navegar para a tela de detalhes.
+  function handleViewDetails(post: PostItem) { 
+    router.push({
+      pathname: '/(details)/post/detalhes/[id]', 
+      params: { 
+        id: post.id 
+      }
+    });    // TODO: Navegar para a tela de detalhes.
   }
 
   return (
