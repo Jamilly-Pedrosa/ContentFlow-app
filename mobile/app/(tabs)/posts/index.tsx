@@ -5,7 +5,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { router } from 'expo-router'; //
+import { router } from 'expo-router'; 
 import { useState, useEffect, useCallback } from 'react';
 
 import { PostCard } from '../../../components/posts/PostCard';
@@ -13,6 +13,8 @@ import CardStatusPost from '../../../components/posts/CardStatusPost';
 
 import api from '../../../utils/api';
 import { getToken } from '../../../utils/tokenServie';
+
+import ContentFilters from '../../../components/filters/ContentFilters';
 
 import { useRouter } from 'expo-router';
 
@@ -78,14 +80,6 @@ export default function Post() {
     fetchPosts();
   }, [fetchPosts]);
 
-  // Filtros
-  const filteredPosts =
-    activeFilter === 'Todos'
-      ? myposts
-      : myposts.filter(
-          (post) => post.status === activeFilter,
-        );
-
   // Contagem por status
   const planejados = myposts.filter(
     (post) => post.status === 'Planejado',
@@ -95,10 +89,30 @@ export default function Post() {
     (post) => post.status === 'Em andamento',
   ).length;
 
+  const postados = myposts.filter(
+    (post) => post.status === 'Postado',
+  ).length;
+
+  // Opções dos filtros
+  const postFilters = [
+    { label: 'Todos', value: 'Todos', count: myposts.length },
+    { label: 'Planejados', value: 'Planejado', count: planejados },
+    { label: 'Em andamento', value: 'Em andamento', count: emAndamento },
+    { label: 'Postados', value: 'Postado', count: postados },
+  ];
+
+  // Filtros
+  const filteredPosts =
+    activeFilter === 'Todos'
+      ? myposts
+      : myposts.filter(
+          (post) => post.status === activeFilter,
+        );
+
   // Ações do dropdown
   function handleEditPost(post: PostItem) {
     router.push({pathname: '/(creation)/post/[id]', params: { id: post.id }});
-    // TODO: Navegar para a tela de edição.
+    //Navegar para a tela de edição.
   }
 
   async function handleDeletePost(post: PostItem) {
@@ -123,7 +137,7 @@ export default function Post() {
       params: { 
         id: post.id 
       }
-    });    // TODO: Navegar para a tela de detalhes.
+    });   
   }
 
   return (
@@ -134,48 +148,11 @@ export default function Post() {
       >
 
         {/* Filtros */}
-        <View className="mt-2 flex-row flex-wrap gap-2">
-
-          <Pressable
-            onPress={() => setActiveFilter('Todos')}
-            className={`rounded-full px-3 py-2 ${
-              activeFilter === 'Todos'
-                ? 'bg-purple-50'
-                : 'bg-gray-50'
-            }`}
-          >
-            <Text className="text-xs">
-              Todos ({myposts.length})
-            </Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => setActiveFilter('Planejado')}
-            className={`rounded-full px-3 py-2 ${
-              activeFilter === 'Planejado'
-                ? 'bg-purple-50'
-                : 'bg-gray-50'
-            }`}
-          >
-            <Text className="text-xs">
-              Planejados ({planejados})
-            </Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => setActiveFilter('Em andamento')}
-            className={`rounded-full px-3 py-2 ${
-              activeFilter === 'Em andamento'
-                ? 'bg-purple-50'
-                : 'bg-gray-50'
-            }`}
-          >
-            <Text className="text-xs">
-              Em andamento ({emAndamento})
-            </Text>
-          </Pressable>
-
-        </View>
+        <ContentFilters
+          filters={postFilters}
+          activeFilter={activeFilter}
+          setActiveFilter={setActiveFilter}
+        />
 
         {/* Carregamento */}
         {loading ? (
