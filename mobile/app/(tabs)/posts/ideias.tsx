@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import IdeiaCard from '../../../components/posts/IdeaCard';
 import { useRouter } from 'expo-router';
 
+
 export default function Ideias() {
   const router = useRouter();
   const [ideias, setIdeias] = useState([]);
@@ -39,7 +40,15 @@ export default function Ideias() {
     fetchIdeias();
   }, []);
 
+  //navegar para detalhes da ideia
+  const handleViewDetails = (ideia: any) => {
+    router.push({
+      pathname: '/(details)/ideias/detalhes/[id]',
+      params: { id: String(ideia.id) },
+    });
+  };
 
+  //transformar ideia em post
   const planejar = async (ideia: any) => {
     if (!ideia) {
       console.error("Ideia não encontrada!");
@@ -91,7 +100,6 @@ export default function Ideias() {
     }
   }
 
-
   return (
     <View className="flex-1 pt-10">
       {ideias.length === 0 ? (
@@ -106,9 +114,16 @@ export default function Ideias() {
             <IdeiaCard
               key={ideia.id}
               title={ideia.title}
+              onPress={() => handleViewDetails(ideia)}
+              onDetails={() => handleViewDetails(ideia)}
               onPlan={() => planejar(ideia)}
               onDelete={() => deleteIdeia(ideia.id)}
-              onEdit={() => router.push({pathname: '/(creation)/ideia/[id]', params: { id: ideia.id }})}
+              onEdit={() =>
+                router.push({
+                  pathname: '/(creation)/ideia/[id]',
+                  params: { id: String(ideia.id) },
+                })
+              }
               isUsed={ideia.isPlanned}
             />
           ))}
@@ -117,3 +132,4 @@ export default function Ideias() {
     </View>
   );
 }
+

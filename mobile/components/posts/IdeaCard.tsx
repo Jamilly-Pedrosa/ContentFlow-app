@@ -1,4 +1,3 @@
-
 import { Pressable, Text, View } from 'react-native';
 import { LightbulbIcon } from 'phosphor-react-native';
 
@@ -11,6 +10,7 @@ interface IdeaCardProps {
   onEdit?: () => void;
   onDelete?: () => void;
   onDetails?: () => void;
+  onPress?: () => void; // Função chamada ao pressionar o card
 }
 
 export default function IdeaCard({
@@ -20,12 +20,21 @@ export default function IdeaCard({
   onEdit,
   onDelete,
   onDetails,
+  onPress,
 }: IdeaCardProps) {
   return (
     <View className="rounded-xl bg-white p-2 gap-2">
 
       {/* Conteúdo da ideia */}
       <View className="flex-row items-center gap-3">
+
+        <Pressable
+          onPress={onPress}
+          disabled={!onPress}
+          accessibilityRole="button"
+          accessibilityLabel={`Visualizar detalhes da ideia ${title}`}
+          className="flex-1 flex-row items-center gap-3"
+        >
 
         {/* Ícone */}
         <View className="h-[83px] w-[60px] items-center justify-center rounded-xl bg-gray-100">
@@ -43,12 +52,13 @@ export default function IdeaCard({
         </View>
 
         {/* Menu de ações */}
+        </Pressable>
+
         <PostActionsDropdown
           onEdit={onEdit}
           onDelete={onDelete}
           onDetails={onDetails}
         />
-
       </View>
 
       {/* Botão Planejar: exibido somente para ideias não utilizadas */}
@@ -69,3 +79,4 @@ export default function IdeaCard({
     </View>
   );
 }
+
