@@ -55,29 +55,37 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-
   return (
     <UserProvider>
       <ThemeProvider value={DefaultTheme}>
         <Stack
           screenOptions={{
-              contentStyle: {
-                backgroundColor: '#FFFFFF',
-              },
-            }}
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: '#FFFFFF',
+            },
+          }}
         >
           <Stack.Screen
-              name="(auth)"
-              options={{ headerShown: false }}
+            name="(auth)"
+            options={{ headerShown: false }}
           />
+
           <Stack.Screen
             name="(creation)"
             options={{ headerShown: false }}
           />
+
           <Stack.Screen
             name="(tabs)"
-            options={{ headerShown: false }} />
-          </Stack>
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name="(details)"
+            options={{ headerShown: false }}
+          />
+        </Stack>
       </ThemeProvider>
     </UserProvider>
   );

@@ -120,8 +120,8 @@ export default function CriarPost({mode, postId}: PostFormProps) {
       return 'O título deve ter até 40 caracteres.';
     }
 
-    if (content.length > 200) {
-      return 'A legenda deve ter até 200 caracteres.';
+    if (content.length > 2200) {
+      return 'A legenda deve ter até 2.200 caracteres.';
     }
 
     if (!validarData(dataPublicacao.trim())) {
@@ -245,8 +245,12 @@ export default function CriarPost({mode, postId}: PostFormProps) {
                   placeholder="Legenda sobre sua postagem"
                   value={legenda}
                   onChangeText={setLegenda}
+                  maxLength={2200}
                   accessibilityLabel="Legenda do post"
                 />
+                <Text className="self-end font-poppins text-legal-text text-[#6B6B6B]">
+                  {legenda.length}/2200
+                </Text>
               </View>
 
               <Input
