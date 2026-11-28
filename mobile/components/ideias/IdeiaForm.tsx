@@ -6,7 +6,7 @@ import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { TextArea } from '../ui/TextArea';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useEffect } from 'react';
 
@@ -163,9 +163,13 @@ export default function IdeiaForm({ mode, ideiaId }: IdeiaFormProps) {
                             value={legenda}
                             onChangeText={setLegenda}
                             accessibilityLabel="Legenda da ideia"
+                            maxLength={2200}
                         />
+                        <Text className="self-end font-poppins text-legal-text text-[#6B6B6B]">
+                            {legenda.length}/2200
+                        </Text>
                     </View>
-
+                       
                     {/* Categoria 
                     <View>
                         <Input 
